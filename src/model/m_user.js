@@ -30,5 +30,12 @@ module.exports = {
                 }
             })
         })
+    },
+    postFriend: (setData) => {
+        return new Promise((resolve, reject) => {
+            db.query('INSERT INTO friend SET ?', setData, (error, result) => {
+                !error ? resolve(setData) : reject(new Error(error))
+            })
+        })
     }
 }

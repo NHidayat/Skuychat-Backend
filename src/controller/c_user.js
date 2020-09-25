@@ -1,7 +1,7 @@
 const helper = require('../helper/helper')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { postUser, getUserByEmail, getUserById } = require('../model/m_user')
+const { postUser, getUserByEmail, getUserById, postFriend } = require('../model/m_user')
 
 module.exports = {
     RegisterUser: async (request, response) => {
