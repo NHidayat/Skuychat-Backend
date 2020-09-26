@@ -1,7 +1,8 @@
 const helper = require('../helper/helper')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { postUser, getUserByEmail, getUserById, postFriend } = require('../model/m_user')
+const fs = require('fs')
+const { postUser, getUserByEmail, getUserById, postFriend, patchUser } = require('../model/m_user')
 
 module.exports = {
     RegisterUser: async (request, response) => {
@@ -91,5 +92,50 @@ module.exports = {
     		console.log(e)
     		return helper.response(response, 400, 'Bad Request', e)
     	}
+    },
+    patchUserById: async (request, response) => {
+        const { id } = request.params
+        const { user_name, user_full_name, user_bio, user_phone } = request.body
+        const user_image = request.file
+        try {
+            if (
+                user_name == '' || user_name == undefined ||
+                user_full_name == '' || user_full_name == undefined ||
+                user_bio == undefined ||
+                user_phone == undefined
+            ) {
+                return helper.response(response, 400, "The data you've entered is not complete!")
+            }
+            let setData = {
+                user_name: '@' + 'user_name',
+                user_full_name,
+                user_bio,
+                user_phone
+            }
+            const checkData = await getUserById(id)
+
+            if (checkData.length > 0) {
+                let result = ''
+                if (user_image == undefined || user_image == '') {
+                    setData = setData
+                } else {
+                    setData.user_image = user_image.filename
+                    const image = checkData[0].user_image
+                    if (image !== null) {
+                        fs.unlink(`./uploads/${image}`, function(err) {
+                            if (err) throw err;
+                        })
+                    }
+                }
+
+                result = await patchUser(setData, id)
+                return helper.response(response, 200, "User data updated", result)
+            } else {
+                return helper.response(response, 404, `User with ${id} is not found!`)
+            }
+        } catch (e) {
+            console.log(e)
+            return helper.response(response, 400, "Bad Request", e)
+        }
     }
 }

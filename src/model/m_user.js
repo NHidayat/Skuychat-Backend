@@ -37,5 +37,12 @@ module.exports = {
                 !error ? resolve(setData) : reject(new Error(error))
             })
         })
+    },
+    patchUser: (setData) => {
+        return new Promise((resolve, reject) => {
+            db.query('UPDATE user SET ?', setData, (error, result) => {
+                !error ? resolve(setData) : reject(new Error(error))
+            })
+        })
     }
 }
