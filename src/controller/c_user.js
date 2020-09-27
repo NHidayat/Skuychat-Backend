@@ -33,6 +33,7 @@ module.exports = {
 
         setDataUser = {
             user_name: '@' + user_name,
+            user_full_name: user_name,
             user_email,
             user_password: encryptPassword
         }
@@ -43,7 +44,7 @@ module.exports = {
                 return helper.response(response, 403, 'This email already registered')
             } else {
                 const result = await postUser(setDataUser)
-                return helper.response(response, 200, 'Success register user')
+                return helper.response(response, 200, 'Success register user', result)
             }
         } catch (e) {
             console.log(e)

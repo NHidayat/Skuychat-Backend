@@ -14,6 +14,27 @@ const http = require("http")
 const server = http.createServer(app)
 const io = socket(server)
 
+io.on("connection", (socket) => {
+	console.log("Socket.io Connect")
+
+	socket.on('start', data => {
+		console.log(data.room_id)
+		socket.join(data.room_id)
+	})
+
+	socket.on('roomMessage', data => {
+		console.log(data)
+		// io.to(data.room_id).emit('chatMessage', data)
+		io.emit('chatMessage', data)
+	})
+
+	socket.on('typing', data => {
+		console.log(data)
+		socket.broadcast.emit('typingMessage', data.user_full_name)
+		// socket.broadcast.to(data.room).emit('typingMessage', data.username)
+	})
+})
+
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))

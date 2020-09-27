@@ -43,4 +43,11 @@ module.exports = {
             })
         })
     },
+    checkRoomUsed: (sid, git) => {
+         return new Promise((resolve, reject) => {
+            db.query('SELECT * FROM room_chat WHERE sender_id = ? AND getter_id = ?', [sid, git], (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
 }
