@@ -59,7 +59,9 @@ module.exports = {
 
             if (result.length > 0) {
                 for (i = 0; i < result.length; i++) {
+                    const getRoomName = await getUserById(result[i].getter_id)  
                     const getLatestMsg = await getLatestMessage(result[i].room_id)
+                    result[i].roomName = getRoomName[0].user_full_name
                     result[i].latestMessage = getLatestMsg
                 }
             } 
