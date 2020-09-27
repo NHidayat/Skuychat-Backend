@@ -59,10 +59,11 @@ module.exports = {
 
             if (result.length > 0) {
                 for (i = 0; i < result.length; i++) {
-                    const getRoomName = await getUserById(result[i].getter_id)  
+                    const getRoomData = await getUserById(result[i].getter_id)  
                     const getLatestMsg = await getLatestMessage(result[i].room_id)
-                    result[i].roomName = getRoomName[0].user_full_name
-                    result[i].latestMessage = getLatestMsg
+                    result[i].room_name = getRoomData[0].user_full_name
+                    result[i].room_img = getRoomData[0].user_image
+                    result[i].latest_message = getLatestMsg
                 }
             } 
 
@@ -78,12 +79,16 @@ module.exports = {
         try {
             const result = await getRoomById(user_id, room_id)
             if (result.length > 0) {
-                const getMessage = await getMessageByRoomId(room_id)
+                const getGetterData = await getUserById(result[0].getter_id)
+                result[0].room_name = getGetterData[0].user_full_name
+                result[0].room_img = getGetterData[0].user_image
 
+                const getMessage = await getMessageByRoomId(room_id)
                 if (getMessage.length > 0) {
                     for (i = 0; i < getMessage.length; i++) {
                         const getSender = await getUserById(getMessage[i].user_id)
                         getMessage[i].sender_name = getSender[0].user_full_name
+                        getMessage[i].sender_img = getSender[0].user_image
                     }
                 }
                 result[0].messages = getMessage
