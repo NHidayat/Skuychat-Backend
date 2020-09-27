@@ -38,9 +38,9 @@ module.exports = {
             })
         })
     },
-    patchUser: (setData) => {
+    patchUser: (setData, id) => {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE user SET ?', setData, (error, result) => {
+            db.query('UPDATE user SET ? WHERE user_id =  ?', [setData, id], (error, result) => {
                 !error ? resolve(setData) : reject(new Error(error))
             })
         })
