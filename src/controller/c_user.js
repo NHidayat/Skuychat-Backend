@@ -6,10 +6,10 @@ const { postUser, getUserByEmail, getUserById, postFriend, patchUser } = require
 
 module.exports = {
     RegisterUser: async (request, response) => {
-        const { user_name, user_email, user_password, user_confirm_password } = request.body
+        const { lat, user_email, user_password, user_confirm_password } = request.body
 
         if (
-            user_name == '' || user_name == undefined ||
+            lat == '' || lat == undefined ||
             user_email == '' || user_email == undefined ||
             user_password == '' || user_password == undefined ||
             user_confirm_password == '' || user_confirm_password == undefined
@@ -32,8 +32,8 @@ module.exports = {
         }
 
         setDataUser = {
-            user_name: '@' + user_name,
-            user_full_name: user_name,
+            lat: '@' + lat,
+            lng: lat,
             user_email,
             user_password: encryptPassword
         }
@@ -60,11 +60,11 @@ module.exports = {
                 const checkPassword = bcrypt.compareSync(user_password, checkUser[0].user_password)
 
                 if (checkPassword) {
-                    const { user_id, user_name } = checkUser[0]
+                    const { user_id, lat } = checkUser[0]
 
                     let payload = {
                         user_id,
-                        user_name,
+                        lat,
                     }
                     const token = jwt.sign(payload, 'SKUYYY', { expiresIn: 3600 * 24 })
                     payload = { ...payload, token }
@@ -81,35 +81,35 @@ module.exports = {
         }
     },
     getUserById: async (request, response) => {
-    	const { id } = request.params
-    	try {
-    		const result = await getUserById(id)
-    		if (result.length > 0) {
-    			return helper.response(response, 200, `Success get user by ID ${id}`, result)
-    		} else {
-    			return helper.response(response, 404, `User by ID ${id} is not found!`, result)
-    		}
-    	} catch(e) {
-    		console.log(e)
-    		return helper.response(response, 400, 'Bad Request', e)
-    	}
+        const { id } = request.params
+        try {
+            const result = await getUserById(id)
+            if (result.length > 0) {
+                return helper.response(response, 200, `Success get user by ID ${id}`, result)
+            } else {
+                return helper.response(response, 404, `User by ID ${id} is not found!`, result)
+            }
+        } catch (e) {
+            console.log(e)
+            return helper.response(response, 400, 'Bad Request', e)
+        }
     },
     patchUserById: async (request, response) => {
         const { id } = request.params
-        const { user_name, user_full_name, user_bio, user_phone } = request.body
+        const { lat, lng, user_bio, user_phone } = request.body
         const user_image = request.file
         try {
             if (
-                user_name == '' || user_name == undefined ||
-                user_full_name == '' || user_full_name == undefined ||
+                lat == '' || lat == undefined ||
+                lng == '' || lng == undefined ||
                 user_bio == undefined ||
                 user_phone == undefined
             ) {
                 return helper.response(response, 400, "The data you've entered is not complete!")
             }
             let setData = {
-                user_name: '@' + user_name,
-                user_full_name,
+                lat: '@' + lat,
+                lng,
                 user_bio,
                 user_phone
             }
@@ -131,6 +131,31 @@ module.exports = {
 
                 result = await patchUser(setData, id)
                 return helper.response(response, 200, "User data updated", result)
+            } else {
+                return helper.response(response, 404, `User with ${id} is not found!`)
+            }
+        } catch (e) {
+            console.log(e)
+            return helper.response(response, 400, "Bad Request", e)
+        }
+    },
+    patchLocation: async (request, response) => {
+        const { id } = request.params
+        const { lat, lng } = request.body
+        try {
+            if (
+                lat == '' || lat == undefined ||
+                lng == '' || lng == undefined
+            ) {
+                return helper.response(response, 400, "The data you've entered is not complete!")
+            }
+            let setData = { lat, lng }
+
+            const checkData = await getUserById(id)
+
+            if (checkData.length > 0) {
+                const result = await patchUser(setData, id)
+                return helper.response(response, 200, "Location data updated", result)
             } else {
                 return helper.response(response, 404, `User with ${id} is not found!`)
             }
