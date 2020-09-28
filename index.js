@@ -18,14 +18,15 @@ io.on("connection", (socket) => {
 	console.log("Socket.io Connect")
 
 	socket.on('start', data => {
-		console.log(data.room_id)
-		socket.join(data.room_id)
+		console.log(data)
+		socket.join(data)
 	})
 
-	socket.on('roomMessage', data => {
-		// console.log(data)
-		// io.to(data.room_id).emit('chatMessage', data)
-		io.emit('chatMessage', data)
+	socket.on('roomMessage', async (data) => {
+		await socket.join(data.room_id)
+		// console.log(data.room_id)
+		io.to(data.room_id).emit('chatMessage', data)
+		// io.emit('chatMessage', data)
 	})
 
 	socket.on('typing', data => {

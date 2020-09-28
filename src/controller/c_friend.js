@@ -1,6 +1,6 @@
 const helper = require('../helper/helper')
 const { getUserByEmail, getUserById, postFriend} = require('../model/m_user')
-const { getFriendByEmail, getFriendsByUser } = require('../model/m_friend')
+const { getFriendByEmail, getFriendsByUser, deleteFriend  } = require('../model/m_friend')
 
 module.exports = {
     addFriend: async (request, response) => {
@@ -64,5 +64,29 @@ module.exports = {
     		console.log(e)
     		return helper.response(response, 400, 'Bad Request')
     	}
+    },
+    deleteFriend: async (request, response) => {
+        const { user_id, friend_email } = request.params
+
+        if (
+            user_id == '' || user_id == undefined ||
+            friend_email == '' || friend_email == undefined
+            ) {
+            return helper.response(response, 403, 'Data is not complete')
+        }
+        try {
+            const checkData = await getFriendByEmail(user_id, friend_email)
+
+            if (checkData.length < 1) {
+                return helper.response(response, 403, 'Friends data is not found')
+            } else {
+                const result = await deleteFriend(user_id, friend_email)
+                return helper.response(response, 200, 'Success delete friends', result)
+            }
+        } catch(e) {
+            console.log(e);
+            return helper.response(response, 400, 'Bad Request', e)
+        }
+
     }
 }

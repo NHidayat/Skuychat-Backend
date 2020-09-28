@@ -15,4 +15,19 @@ module.exports = {
             })
         })
     },
+    deleteFriend: (user_id ,friend_email) => {
+        return new Promise((resolve, reject) => {
+            db.query('DELETE FROM friend WHERE user_id = ? AND friend_email = ? ',[user_id, friend_email], (error, result) => {
+                if (!error) {
+                    const newResult = {
+                        user_id,
+                        friend_email
+                    }
+                    resolve(newResult)
+                } else {
+                    reject(new Error(error))
+                }
+            })
+        })
+    }
 }
