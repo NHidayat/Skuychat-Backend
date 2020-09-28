@@ -1,5 +1,5 @@
 const helper = require('../helper/helper')
-const { getUserByEmail, getUserById, postFriend } = require('../model/m_user')
+const { getUserByEmail, getUserById, postFriend} = require('../model/m_user')
 const { getFriendByEmail, getFriendsByUser } = require('../model/m_friend')
 
 module.exports = {
@@ -48,7 +48,17 @@ module.exports = {
     	const { id } = request.params
 
     	try {
-    		result = await getFriendsByUser(id)
+    		const result = await getFriendsByUser(id)
+            if (result.length > 0) {
+                for (let i = 0; i < result.length; i++) {
+                    const getDataFriend = await getUserByEmail(result[i].friend_email)
+                    result[i].friend_id = getDataFriend[0].user_id 
+                    result[i].friend_name = getDataFriend[0].user_full_name 
+                    result[i].friend_img = getDataFriend[0].user_image
+
+                }
+            }
+            
     		return helper.response(response, 200, `Success get friends by user ID ${id}`, result)
     	} catch(e) {
     		console.log(e)
