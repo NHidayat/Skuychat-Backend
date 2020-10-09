@@ -6,10 +6,10 @@ const { postUser, getUserByEmail, getUserById, postFriend, patchUser } = require
 
 module.exports = {
     RegisterUser: async (request, response) => {
-        const { lat, user_email, user_password, user_confirm_password } = request.body
+        const { user_name, user_email, user_password, user_confirm_password } = request.body
 
         if (
-            lat == '' || lat == undefined ||
+            user_name == '' || user_name == undefined ||
             user_email == '' || user_email == undefined ||
             user_password == '' || user_password == undefined ||
             user_confirm_password == '' || user_confirm_password == undefined
@@ -32,8 +32,8 @@ module.exports = {
         }
 
         setDataUser = {
-            lat: '@' + lat,
-            lng: lat,
+            user_name: '@' + user_name,
+            user_full_name: user_name,
             user_email,
             user_password: encryptPassword
         }
@@ -96,20 +96,20 @@ module.exports = {
     },
     patchUserById: async (request, response) => {
         const { id } = request.params
-        const { lat, lng, user_bio, user_phone } = request.body
+        const { user_name, user_full_name, user_bio, user_phone } = request.body
         const user_image = request.file
         try {
             if (
-                lat == '' || lat == undefined ||
-                lng == '' || lng == undefined ||
+                user_name == '' || user_name == undefined ||
+                user_full_name == '' || user_full_name == undefined ||
                 user_bio == undefined ||
                 user_phone == undefined
             ) {
                 return helper.response(response, 400, "The data you've entered is not complete!")
             }
             let setData = {
-                lat: '@' + lat,
-                lng,
+                user_name: '@' + user_name,
+                user_full_name,
                 user_bio,
                 user_phone
             }
