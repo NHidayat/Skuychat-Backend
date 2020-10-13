@@ -18,22 +18,20 @@ io.on("connection", (socket) => {
 	console.log("Socket.io Connect")
 
 	socket.on('start', data => {
-		console.log(data)
-		socket.join(data)
+		socket.join(data.room_id)
 	})
 
+	socket.on("changeRoom", (data) => {
+	    socket.leave(data.oldRoom)
+	    socket.join(data.newRoom)
+  	})
+
 	socket.on('roomMessage', (data) => {
-		// console.log(data.room_id)
-		socket.join(data.room_id)
 		io.to(data.room_id).emit('chatMessage', data)
-		// io.emit('chatMessage', data)
 	})
 
 	socket.on('typing', (data) => {
-		socket.join(data.room_id)
-		// socket.broadcast.emit('typingMessage', data.user_full_name)
 		socket.broadcast.to(data.room_id).emit('typingMessage', data.user_full_name)
-		// console.log(data.room_id)
 	})
 })
 
