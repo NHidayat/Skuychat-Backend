@@ -191,5 +191,22 @@ module.exports = {
             console.log(e);
             return helper.response(response, 400, "Bad Request", e)
         }
-    }
+    },
+    getUserStatus: async (request, response) => {
+        const { id } = request.params
+        try {
+            const result = await getUserById(id)
+            if (result.length > 0) {
+                const newResult = {
+                    user_status: result[0].user_status
+                }
+                return helper.response(response, 200, `Success get user status by ID ${id}`, newResult)
+            } else {
+                return helper.response(response, 404, `User by ID ${id} is not found!`, result)
+            }
+        } catch (e) {
+            console.log(e)
+            return helper.response(response, 400, 'Bad Request', e)
+        }
+    },
 }
