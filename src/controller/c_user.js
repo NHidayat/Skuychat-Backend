@@ -68,6 +68,9 @@ module.exports = {
                     }
                     const token = jwt.sign(payload, 'SKUYYY', { expiresIn: 3600 * 24 })
                     payload = { ...payload, token }
+
+                    const updateStatus = await patchUser({ user_status: 1 }, user_id)
+
                     return helper.response(response, 200, 'Success Login', payload)
                 } else {
                     return helper.response(response, 403, 'Wrong Password')
@@ -157,10 +160,35 @@ module.exports = {
                 const result = await patchUser(setData, id)
                 return helper.response(response, 200, "Location data updated", result)
             } else {
-                return helper.response(response, 404, `User with ${id} is not found!`)
+                return helper.response(response, 404, `User with ID ${id} is not found!`)
             }
         } catch (e) {
             console.log(e)
+            return helper.response(response, 400, "Bad Request", e)
+        }
+    },
+    patchStatus: async (request, response) => {
+
+        try {
+            const { id } = request.params
+            const { user_status } = request.body
+
+            if ((user_status !== "1" && user_status !== "0") || user_status == undefined) {
+                return helper.response(response, 403, "User status must be 1 or 0")
+            }
+            const checkUser = await getUserById(id)
+
+            if (checkUser.length > 0) {
+                const setData = { user_status }
+                const result = await patchUser({ user_status }, id)
+                const status = user_status == 1 ? 'Online' : 'Offline'
+
+                return helper.response(response, 200, `User status updated to ${status}`, setData)
+            } else {
+                return helper.response(response, 404, `User with ID ${id} is not found!`)
+            }
+        } catch (e) {
+            console.log(e);
             return helper.response(response, 400, "Bad Request", e)
         }
     }
