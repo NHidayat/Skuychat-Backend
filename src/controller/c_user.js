@@ -32,7 +32,7 @@ module.exports = {
         }
 
         setDataUser = {
-            user_name: '@' + user_name,
+            user_name: user_name,
             user_full_name: user_name,
             user_email,
             user_password: encryptPassword
@@ -108,7 +108,7 @@ module.exports = {
                 return helper.response(response, 400, "The data you've entered is not complete!")
             }
             let setData = {
-                user_name: '@' + user_name,
+                user_name: user_name,
                 user_full_name,
                 user_bio,
                 user_phone
